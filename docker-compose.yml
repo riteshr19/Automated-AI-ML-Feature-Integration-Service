@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  ai-ml-service:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_DEBUG=false
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Example Laravel integration service (commented out)
+  # laravel-app:
+  #   image: your-laravel-app:latest
+  #   ports:
+  #     - "8080:80"
+  #   depends_on:
+  #     - ai-ml-service
+  #   environment:
+  #     - AI_ML_SERVICE_URL=http://ai-ml-service:8000
+  #   restart: unless-stopped
